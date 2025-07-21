@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barnameh.Beat.Ras</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #ffffff;
+            --accent-color: #00ff00;
+            --glow-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Login Page Styles */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: var(--primary-color);
+        }
+        
+        .login-box {
+            background-color: #111;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px var(--glow-color);
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid var(--secondary-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                transparent,
+                transparent,
+                transparent,
+                var(--glow-color),
+                transparent,
+                transparent,
+                transparent
+            );
+            transform: rotate(30deg);
+            animation: shine 6s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% {
+                left: -50%;
+                top: -50%;
+            }
+            100% {
+                left: 150%;
+                top: 150%;
+            }
+        }
+        
+        .login-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .login-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 2px;
+            background: var(--secondary-color);
+            margin: 10px auto;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #222;
+            border: 1px solid #444;
+            border-radius: 5px;
+            color: var(--secondary-color);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: transparent;
+            color: var(--secondary-color);
+            border: 1px solid var(--secondary-color);
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .login-btn:hover {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+        
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                var(--glow-color),
+                transparent
+            );
+            transition: 0.5s;
+            z-index: -1;
+        }
+        
+        .login-btn:hover::before {
+            left: 100%;
+        }
+        
+        .error-message {
+            color: #ff3333;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        /* Main Menu Styles */
+        .main-menu {
+            display: none;
+            padding: 20px;
+        }
+        
+        .menu-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+        }
+        
+        .menu-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 2px;
+            background: var(--secondary-color);
+            margin: 10px auto;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .menu-item {
+            background-color: #111;
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+            border-color: var(--secondary-color);
+        }
+        
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            z-index: -1;
+            background: linear-gradient(45deg, #fff, #000, #fff);
+            background-size: 200%;
+            border-radius: 10px;
+            opacity: 0;
+            transition: 0.5s;
+        }
+        
+        .menu-item:hover::before {
+            opacity: 1;
+            animation: animate-border 2s linear infinite;
+        }
+        
+        @keyframes animate-border {
+            0% {
+                background-position: 0 0;
+            }
+            50% {
+                background-position: 300% 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
+        
+        .menu-item-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .menu-item-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .menu-item-desc {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        /* Beat Maker Styles */
+        .beat-maker {
+            display: none;
+            padding: 20px;
+        }
+        
+        .beat-maker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn {
+            background-color: transparent;
+            color: var(--secondary-color);
+            border: 1px solid var(--secondary-color);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        .pad-bank {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .pad-category {
+            margin-bottom: 30px;
+        }
+        
+        .category-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .category-title::after {
+            content: '';
+            display: block;
+            width: 50%;
+            height: 1px;
+            background: var(--secondary-color);
+            margin-top: 5px;
+        }
+        
+        .pad {
+            background-color: #111;
+            border: 1px solid #444;
+            border-radius: 5px;
+            aspect-ratio: 1/1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pad:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+        
+        .pad.active {
+            background-color: #222;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 20px var(--glow-color);
+        }
+        
+        .pad::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: translateX(-100%);
+            transition: 0.5s;
+        }
+        
+        .pad:hover::before {
+            transform: translateX(100%);
+        }
+        
+        .pad-label {
+            font-size: 0.8rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .control-btn {
+            background-color: transparent;
+            color: var(--secondary-color);
+            border: 1px solid var(--secondary-color);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .control-btn:hover {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+        
+        /* Upload Voice Styles */
+        .upload-voice {
+            display: none;
+            padding: 20px;
+        }
+        
+        .upload-box {
+            background-color: #111;
+            border: 1px dashed #444;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+        
+        .upload-box:hover {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #444;
+        }
+        
+        .upload-text {
+            margin-bottom: 20px;
+        }
+        
+        .upload-btn {
+            background-color: transparent;
+            color: var(--secondary-color);
+            border: 1px solid var(--secondary-color);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-btn:hover {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        /* Sound Settings Styles */
+        .sound-settings {
+            display: none;
+            padding: 20px;
+        }
+
+        .mixer-track {
+            margin-bottom: 20px;
+        }
+
+        .mixer-track label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .mixer-track input[type="range"] {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: #444;
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+
+        .mixer-track input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 2px var(--glow-color);
+        }
+
+        .mixer-track input[type="range"]:hover {
+            opacity: 1;
+        }
+        
+        /* Final Output Styles */
+        .final-output {
+            display: none;
+            padding: 20px;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .pad-bank {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="login-container" id="login-page">
+        <div class="login-box">
+            <h1 class="login-title">Barnameh.Beat.Ras</h1>
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Enter username">
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter password">
+            </div>
+            <button class="login-btn" id="login-btn">Login</button>
+            <div class="error-message" id="error-message">Invalid username or password</div>
+        </div>
+    </div>
+    
+    <!-- Main Menu -->
+    <div class="main-menu" id="main-menu">
+        <h1 class="menu-title">Barnameh.Beat.Ras</h1>
+        <div class="menu-grid">
+            <div class="menu-item" id="live-beat-maker">
+                <div class="menu-item-icon">🎵</div>
+                <h2 class="menu-item-title">Live Beat Maker</h2>
+                <p class="menu-item-desc">Create beats in real-time with interactive sound pads</p>
+            </div>
+            <div class="menu-item" id="upload-voice">
+                <div class="menu-item-icon">🎤</div>
+                <h2 class="menu-item-title">Upload Voice</h2>
+                <p class="menu-item-desc">Upload vocals to mix with your beats</p>
+            </div>
+            <div class="menu-item" id="sound-settings">
+                <div class="menu-item-icon">🎛️</div>
+                <h2 class="menu-item-title">Sound Settings</h2>
+                <p class="menu-item-desc">Adjust volume, EQ and effects</p>
+            </div>
+            <div class="menu-item" id="final-output">
+                <div class="menu-item-icon">💿</div>
+                <h2 class="menu-item-title">Final Output</h2>
+                <p class="menu-item-desc">Preview, render, and download your mix</p>
+            </div>
+            <div class="menu-item" id="creative-mode">
+                <div class="menu-item-icon">✨</div>
+                <h2 class="menu-item-title">Creative Mode</h2>
+                <p class="menu-item-desc">Experimental features and effects</p>
+            </div>
+            <div class="menu-item" id="logout">
+                <div class="menu-item-icon">🚪</div>
+                <h2 class="menu-item-title">Log Out</h2>
+                <p class="menu-item-desc">Return to login screen</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Live Beat Maker -->
+    <div class="beat-maker" id="beat-maker">
+        <div class="beat-maker-header">
+            <h2>Live Beat Maker</h2>
+            <button class="back-btn" id="beat-maker-back">Back to Menu</button>
+        </div>
+        
+        <div class="pad-category">
+            <h3 class="category-title">Drums</h3>
+            <div class="pad-bank">
+                <div class="pad" data-sound="patak">
+                    <div class="pad-label">Patak</div>
+                </div>
+                <div class="pad" data-sound="talkhak">
+                    <div class="pad-label">Talkhak</div>
+                </div>
+                <div class="pad" data-sound="tizpar">
+                    <div class="pad-label">Tizpar</div>
+                </div>
+                <div class="pad" data-sound="dastzan">
+                    <div class="pad-label">Dastzan</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pad-category">
+            <h3 class="category-title">Bass</h3>
+            <div class="pad-bank">
+                <div class="pad" data-sound="ghorresh">
+                    <div class="pad-label">Ghorresh</div>
+                </div>
+                <div class="pad" data-sound="underground">
+                    <div class="pad-label">Underground</div>
+                </div>
+                <div class="pad" data-sound="empty">
+                    <div class="pad-label">-</div>
+                </div>
+                <div class="pad" data-sound="empty">
+                    <div class="pad-label">-</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pad-category">
+            <h3 class="category-title">Melodies</h3>
+            <div class="pad-bank">
+                <div class="pad" data-sound="ehsasi">
+                    <div class="pad-label">Ehsasi</div>
+                </div>
+                <div class="pad" data-sound="noorpardaz">
+                    <div class="pad-label">Noorpardaz</div>
+                </div>
+                <div class="pad" data-sound="sonati-zan">
+                    <div class="pad-label">Sonati-Zan</div>
+                </div>
+                <div class="pad" data-sound="empty">
+                    <div class="pad-label">-</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pad-category">
+            <h3 class="category-title">Effects</h3>
+            <div class="pad-bank">
+                <div class="pad" data-sound="oojgir">
+                    <div class="pad-label">Oojgir</div>
+                </div>
+                <div class="pad" data-sound="enfejar">
+                    <div class="pad-label">Enfejar</div>
+                </div>
+                <div class="pad" data-sound="shokzan">
+                    <div class="pad-label">Shokzan</div>
+                </div>
+                <div class="pad" data-sound="empty">
+                    <div class="pad-label">-</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pad-category">
+            <h3 class="category-title">Vocals</h3>
+            <div class="pad-bank">
+                <div class="pad" data-sound="harfzan">
+                    <div class="pad-label">Harfzan</div>
+                </div>
+                <div class="pad" data-sound="ghat-e-seda">
+                    <div class="pad-label">Ghat-e-seda</div>
+                </div>
+                <div class="pad" data-sound="empty">
+                    <div class="pad-label">-</div>
+                </div>
+                <div class="pad" data-sound="empty">
+                    <div class="pad-label">-</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pad-category">
+            <h3 class="category-title">Special</h3>
+            <div class="pad-bank">
+                <div class="pad" data-sound="khiabooni">
+                    <div class="pad-label">Khiabooni</div>
+                </div>
+                <div class="pad" data-sound="erfani">
+                    <div class="pad-label">Erfani</div>
+                </div>
+                <div class="pad" data-sound="empty">
+                    <div class="pad-label">-</div>
+                </div>
+                <div class="pad" data-sound="empty">
+                    <div class="pad-label">-</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" id="record-btn">Record</button>
+            <button class="control-btn" id="play-btn">Play Loop</button>
+            <button class="control-btn" id="clear-btn">Clear</button>
+            <button class="control-btn" id="play-recording-btn" style="display: none;">Play Recording</button>
+        </div>
+    </div>
+    
+    <!-- Upload Voice -->
+    <div class="upload-voice" id="upload-voice-page">
+        <div class="beat-maker-header">
+            <h2>Upload Voice</h2>
+            <button class="back-btn" id="upload-back">Back to Menu</button>
+        </div>
+        
+        <div class="upload-box" id="upload-dropzone">
+            <div class="upload-icon">⬆️</div>
+            <h3 class="upload-text">Drag & Drop your audio file here or</h3>
+            <button class="upload-btn" id="browse-btn">Browse Files</button>
+            <input type="file" id="audio-file-input" accept="audio/mp3,audio/wav" style="display: none;">
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" id="play-uploaded" disabled>Play Uploaded</button>
+            <button class="control-btn" id="mix-with-beat" disabled>Mix With Beat</button>
+        </div>
+    </div>
+    
+    <!-- Sound Settings -->
+    <div class="sound-settings" id="sound-settings-page" style="display: none; padding: 20px;">
+        <div class="beat-maker-header">
+            <h2>Sound Settings</h2>
+            <button class="back-btn" id="settings-back">Back to Menu</button>
+        </div>
+        
+        <div class="mixer-track">
+            <label for="beat-volume">Beat Volume</label>
+            <input type="range" id="beat-volume" min="-60" max="6" value="0" step="1">
+        </div>
+        
+        <div class="mixer-track">
+            <label for="recording-volume">Recording Volume</label>
+            <input type="range" id="recording-volume" min="-60" max="6" value="0" step="1">
+        </div>
+        
+        <div class="mixer-track">
+            <label for="uploaded-volume">Uploaded Vocal Volume</label>
+            <input type="range" id="uploaded-volume" min="-60" max="6" value="0" step="1">
+        </div>
+        
+        <div class="mixer-track">
+            <label for="reverb-amount">Reverb Amount</label>
+            <input type="range" id="reverb-amount" min="0" max="1" value="0" step="0.05">
+        </div>
+        
+        <div class="mixer-track">
+            <label for="delay-amount">Delay Amount</label>
+            <input type="range" id="delay-amount" min="0" max="1" value="0" step="0.05">
+        </div>
+    </div>
+
+    <!-- Final Output -->
+    <div class="final-output" id="final-output-page" style="display: none; padding: 20px;">
+        <div class="beat-maker-header">
+            <h2>Final Output</h2>
+            <button class="back-btn" id="output-back">Back to Menu</button>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" id="render-btn">Render Mix</button>
+            <a id="download-link" style="display: none;">
+                <button class="control-btn">Download Mix</button>
+            </a>
+        </div>
+        <p id="render-status" style="margin-top: 20px; text-align: center;"></p>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loginPage = document.getElementById('login-page');
+        const mainMenu = document.getElementById('main-menu');
+        const beatMaker = document.getElementById('beat-maker');
+        const uploadVoicePage = document.getElementById('upload-voice-page');
+        const soundSettingsPage = document.getElementById('sound-settings-page');
+        const finalOutputPage = document.getElementById('final-output-page');
+        
+        const loginBtn = document.getElementById('login-btn');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const errorMessage = document.getElementById('error-message');
+        
+        const liveBeatMakerBtn = document.getElementById('live-beat-maker');
+        const uploadVoiceBtn = document.getElementById('upload-voice');
+        const soundSettingsBtn = document.getElementById('sound-settings');
+        const finalOutputBtn = document.getElementById('final-output');
+        const logoutBtn = document.getElementById('logout');
+        
+        const beatMakerBackBtn = document.getElementById('beat-maker-back');
+        const uploadBackBtn = document.getElementById('upload-back');
+        const settingsBackBtn = document.getElementById('settings-back');
+        const outputBackBtn = document.getElementById('output-back');
+        
+        const pads = document.querySelectorAll('.pad');
+        const playBtn = document.getElementById('play-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const recordBtn = document.getElementById('record-btn');
+        const playRecordingBtn = document.getElementById('play-recording-btn');
+        
+        const uploadDropzone = document.getElementById('upload-dropzone');
+        const browseBtn = document.getElementById('browse-btn');
+        const audioFileInput = document.getElementById('audio-file-input');
+        const playUploadedBtn = document.getElementById('play-uploaded');
+        const mixWithBeatBtn = document.getElementById('mix-with-beat');
+
+        let isPlaying = false;
+        let isRecording = false;
+        let loop;
+        let mediaRecorder;
+        let recordedChunks = [];
+        let recordedAudioPlayer;
+        let uploadedAudioPlayer;
+
+        // --- Master Audio Chain ---
+        const masterReverb = new Tone.Reverb({ decay: 1.5, wet: 0 }).toDestination();
+        const masterDelay = new Tone.PingPongDelay("4n", 0).toDestination();
+        
+        // Channel for the beat pads
+        const beatChannel = new Tone.Channel().connect(masterReverb).connect(masterDelay);
+        beatChannel.toDestination();
+
+        // --- Audio Setup using Tone.js ---
+        const players = {
+            'patak': new Tone.Player("sounds/patak.wav").connect(beatChannel),
+            'talkhak': new Tone.Player("sounds/talkhak.wav").connect(beatChannel),
+            'tizpar': new Tone.Player("sounds/tizpar.wav").connect(beatChannel),
+            'dastzan': new Tone.Player("sounds/dastzan.wav").connect(beatChannel),
+            'ghorresh': new Tone.Player("sounds/ghorresh.wav").connect(beatChannel),
+            'underground': new Tone.Player("sounds/underground.wav").connect(beatChannel),
+            'ehsasi': new Tone.Player("sounds/ehsasi.wav").connect(beatChannel),
+            'noorpardaz': new Tone.Player("sounds/noorpardaz.wav").connect(beatChannel),
+            'sonati-zan': new Tone.Player("sounds/sonati-zan.wav").connect(beatChannel),
+            'oojgir': new Tone.Player("sounds/oojgir.wav").connect(beatChannel),
+            'enfejar': new Tone.Player("sounds/enfejar.wav").connect(beatChannel),
+            'shokzan': new Tone.Player("sounds/shokzan.wav").connect(beatChannel),
+            'harfzan': new Tone.Player("sounds/harfzan.wav").connect(beatChannel),
+            'ghat-e-seda': new Tone.Player("sounds/ghat-e-seda.wav").connect(beatChannel),
+            'khiabooni': new Tone.Player("sounds/khiabooni.wav").connect(beatChannel),
+            'erfani': new Tone.Player("sounds/erfani.wav").connect(beatChannel)
+        };
+        
+        // Login Functionality
+        loginBtn.addEventListener('click', function() {
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+            
+            if (username === 'mahdi' && password === '1396') {
+                showPage(mainMenu);
+                errorMessage.style.display = 'none';
+            } else {
+                errorMessage.style.display = 'block';
+            }
+        });
+        
+        // Navigation
+        function showPage(pageToShow) {
+            [loginPage, mainMenu, beatMaker, uploadVoicePage, soundSettingsPage, finalOutputPage].forEach(page => {
+                page.style.display = 'none';
+            });
+            pageToShow.style.display = pageToShow === loginPage ? 'flex' : 'block';
+        }
+
+        liveBeatMakerBtn.addEventListener('click', () => showPage(beatMaker));
+        uploadVoiceBtn.addEventListener('click', () => showPage(uploadVoicePage));
+        soundSettingsBtn.addEventListener('click', () => showPage(soundSettingsPage));
+        finalOutputBtn.addEventListener('click', () => showPage(finalOutputPage));
+        
+        logoutBtn.addEventListener('click', () => {
+            showPage(loginPage);
+            usernameInput.value = '';
+            passwordInput.value = '';
+        });
+        
+        beatMakerBackBtn.addEventListener('click', () => showPage(mainMenu));
+        uploadBackBtn.addEventListener('click', () => showPage(mainMenu));
+        settingsBackBtn.addEventListener('click', () => showPage(mainMenu));
+        outputBackBtn.addEventListener('click', () => showPage(mainMenu));
+        
+        // Pad Interaction - Toggle active state for sequencer
+        pads.forEach(pad => {
+            pad.addEventListener('click', async () => {
+                // Start audio context on first user interaction (required by browsers)
+                if (Tone.context.state !== 'running') {
+                    await Tone.start();
+                    console.log('Audio Context started');
+                }
+                
+                const sound = pad.getAttribute('data-sound');
+                if (sound !== 'empty') {
+                    pad.classList.toggle('active');
+                }
+            });
+        });
+
+        // Sequencer/Transport Controls
+        playBtn.addEventListener('click', () => {
+            toggleLoop();
+        });
+        
+        clearBtn.addEventListener('click', () => {
+            pads.forEach(pad => {
+                pad.classList.remove('active');
+            });
+        });
+        
+        // --- Upload Voice Functionality ---
+        browseBtn.addEventListener('click', () => audioFileInput.click());
+        audioFileInput.addEventListener('change', (e) => handleFileUpload(e.target.files));
+
+        // Drag and Drop functionality
+        uploadDropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadDropzone.style.borderColor = 'var(--accent-color)';
+        });
+        uploadDropzone.addEventListener('dragleave', () => {
+            uploadDropzone.style.borderColor = 'var(--secondary-color)';
+        });
+        uploadDropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadDropzone.style.borderColor = 'var(--secondary-color)';
+            handleFileUpload(e.dataTransfer.files);
+        });
+
+        function handleFileUpload(files) {
+            if (files.length === 0) return;
+            const file = files[0];
+            if (!file.type.startsWith('audio/')) {
+                alert('Please upload a valid audio file (MP3 or WAV).');
+                return;
+            }
+
+            const url = URL.createObjectURL(file);
+            uploadedAudioPlayer = new Tone.Player(url, () => {
+                playUploadedBtn.disabled = false;
+                mixWithBeatBtn.disabled = false;
+                document.querySelector('#upload-dropzone .upload-text').textContent = `Loaded: ${file.name}`;
+            }).connect(beatChannel);
+        }
+
+        playUploadedBtn.addEventListener('click', () => {
+            if (uploadedAudioPlayer && uploadedAudioPlayer.loaded) {
+                uploadedAudioPlayer.start();
+            }
+        });
+
+        mixWithBeatBtn.addEventListener('click', () => {
+            if (uploadedAudioPlayer && uploadedAudioPlayer.loaded) {
+                uploadedAudioPlayer.start();
+                if (!isPlaying) {
+                    toggleLoop();
+                }
+            }
+        });
+
+        // --- Live Recording ---
+        recordBtn.addEventListener('click', async () => {
+            if (!isRecording) {
+                // Start recording
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    
+                    mediaRecorder.ondataavailable = event => {
+                        if (event.data.size > 0) {
+                            recordedChunks.push(event.data);
+                        }
+                    };
+                    
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+                        const audioUrl = URL.createObjectURL(blob);
+                        recordedAudioPlayer = new Tone.Player(audioUrl).connect(beatChannel);
+                        playRecordingBtn.style.display = 'inline-block';
+                        recordedChunks = [];
+                    };
+                    
+                    mediaRecorder.start();
+                    isRecording = true;
+                    recordBtn.textContent = 'Stop Recording';
+                    recordBtn.style.backgroundColor = '#ff3333';
+
+                    // Start the beat if it's not already playing
+                    if (!isPlaying) {
+                        toggleLoop();
+                    }
+
+                } catch (err) {
+                    console.error("Error accessing microphone:", err);
+                    alert("Could not access microphone. Please allow microphone access in your browser settings.");
+                }
+            } else {
+                // Stop recording
+                mediaRecorder.stop();
+                isRecording = false;
+                recordBtn.textContent = 'Record';
+                recordBtn.style.backgroundColor = '';
+
+                // Stop the beat if it was started by the recording
+                if (isPlaying) {
+                    toggleLoop();
+                }
+            }
+        });
+
+        playRecordingBtn.addEventListener('click', () => {
+            if (recordedAudioPlayer && recordedAudioPlayer.loaded) {
+                recordedAudioPlayer.start();
+                // Optionally play the beat along with the recording
+                if (!isPlaying) {
+                    toggleLoop();
+                }
+            } else {
+                alert('Recording is not ready or has not been made yet.');
+            }
+        });
+
+        // --- Sound Settings Controls ---
+        document.getElementById('beat-volume').addEventListener('input', e => beatChannel.volume.value = e.target.value);
+        document.getElementById('recording-volume').addEventListener('input', e => {
+            if(recordedAudioPlayer) recordedAudioPlayer.volume.value = e.target.value;
+        });
+        document.getElementById('uploaded-volume').addEventListener('input', e => {
+            if(uploadedAudioPlayer) uploadedAudioPlayer.volume.value = e.target.value;
+        });
+        document.getElementById('reverb-amount').addEventListener('input', e => masterReverb.wet.value = e.target.value);
+        document.getElementById('delay-amount').addEventListener('input', e => masterDelay.wet.value = e.target.value);
+
+        // --- Final Output and Rendering ---
+        const renderBtn = document.getElementById('render-btn');
+        const downloadLink = document.getElementById('download-link');
+        const renderStatus = document.getElementById('render-status');
+
+        renderBtn.addEventListener('click', async () => {
+            renderStatus.textContent = 'Rendering... Please wait.';
+            renderBtn.disabled = true;
+            downloadLink.style.display = 'none';
+
+            try {
+                // Determine the duration of the mix (e.g., one loop cycle)
+                const renderDuration = Tone.Transport.loopEnd;
+
+                if (renderDuration === 0) {
+                     throw new Error("Cannot render a zero-duration mix. Please create a beat first.");
+                }
+
+                // Offline rendering
+                const buffer = await Tone.Offline(async (offline) => {
+                    // Re-create players in the offline context and connect them
+                    const offlineBeatChannel = new Tone.Channel().toDestination();
+                    
+                    const offlinePlayers = {};
+                    for(const key in players) {
+                        offlinePlayers[key] = new Tone.Player(players[key].buffer).connect(offlineBeatChannel);
+                    }
+                    
+                    // Schedule the beat loop
+                    new Tone.Loop(time => {
+                        pads.forEach(pad => {
+                            if (pad.classList.contains('active')) {
+                                const sound = pad.getAttribute('data-sound');
+                                if (offlinePlayers[sound]) {
+                                    offlinePlayers[sound].start(time);
+                                }
+                            }
+                        });
+                    }, "1m").start(0);
+
+                    // Schedule recorded/uploaded audio if they exist
+                    if(recordedAudioPlayer && recordedAudioPlayer.loaded) {
+                        new Tone.Player(recordedAudioPlayer.buffer).toDestination().start(0);
+                    }
+                    if(uploadedAudioPlayer && uploadedAudioPlayer.loaded) {
+                        new Tone.Player(uploadedAudioPlayer.buffer).toDestination().start(0);
+                    }
+                    
+                    // Start the transport in the offline context
+                    offline.Transport.start();
+
+                }, renderDuration);
+
+                // Convert buffer to WAV and create download link
+                const wavBlob = bufferToWave(buffer.get());
+                const wavUrl = URL.createObjectURL(wavBlob);
+                
+                downloadLink.href = wavUrl;
+                downloadLink.download = 'Barnameh-Beat-Ras-Mix.wav';
+                downloadLink.style.display = 'block';
+                renderStatus.textContent = 'Rendering complete! Your mix is ready for download.';
+
+            } catch (error) {
+                renderStatus.textContent = `Error during rendering: ${error.message}`;
+                console.error(error);
+            } finally {
+                renderBtn.disabled = false;
+            }
+        });
+
+        // Buffer to WAV conversion function (from Tone.js examples)
+        function bufferToWave(abuffer) {
+            let numOfChan = abuffer.numberOfChannels,
+                length = abuffer.length * numOfChan * 2 + 44,
+                buffer = new ArrayBuffer(length),
+                view = new DataView(buffer),
+                channels = [], i, sample,
+                offset = 0,
+                pos = 0;
+
+            // write WAVE header
+            setUint32(0x46464952); // "RIFF"
+            setUint32(length - 8); // file length - 8
+            setUint32(0x45564157); // "WAVE"
+
+            setUint32(0x20746d66); // "fmt " chunk
+            setUint32(16); // length = 16
+            setUint16(1); // PCM (uncompressed)
+            setUint16(numOfChan);
+            setUint32(abuffer.sampleRate);
+            setUint32(abuffer.sampleRate * 2 * numOfChan); // avg. bytes/sec
+            setUint16(numOfChan * 2); // block-align
+            setUint16(16); // 16-bit
+
+            setUint32(0x61746164); // "data" - chunk
+            setUint32(length - pos - 4); // chunk length
+
+            // write interleaved data
+            for (i = 0; i < abuffer.numberOfChannels; i++)
+                channels.push(abuffer.getChannelData(i));
+
+            while (pos < length) {
+                for (i = 0; i < numOfChan; i++) { // interleave channels
+                    sample = Math.max(-1, Math.min(1, channels[i][offset])); // clamp
+                    sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0; // scale to 16-bit signed int
+                    view.setInt16(pos, sample, true); // write 16-bit sample
+                    pos += 2;
+                }
+                offset++ // next source sample
+            }
+
+            // create Blob
+            return new Blob([buffer], { type: "audio/wav" });
+
+            function setUint16(data) {
+                view.setUint16(pos, data, true);
+                pos += 2;
+            }
+
+            function setUint32(data) {
+                view.setUint32(pos, data, true);
+                pos += 4;
+            }
+        }
+
+        // Helper function to toggle loop playback
+        function toggleLoop() {
+            if (!isPlaying) {
+                Tone.Transport.start();
+                playBtn.textContent = 'Stop Loop';
+                isPlaying = true;
+            } else {
+                Tone.Transport.stop();
+                playBtn.textContent = 'Play Loop';
+                isPlaying = false;
+            }
+        }
+
+        // --- Sequencer Loop ---
+        // Create a loop that repeats every 1 bar (a "1m" measure)
+        loop = new Tone.Loop(time => {
+            // This code is executed in a loop
+            pads.forEach(pad => {
+                if (pad.classList.contains('active')) {
+                    const sound = pad.getAttribute('data-sound');
+                    if (players[sound]) {
+                        // Play the sound at the scheduled time
+                        players[sound].start(time);
+                    }
+                }
+            });
+        }, "1m").start(0); // Start the loop at the beginning of the transport timeline
+        
+        
+        // Initialize - Show login page
+        loginPage.style.display = 'flex';
+        mainMenu.style.display = 'none';
+        beatMaker.style.display = 'none';
+        uploadVoicePage.style.display = 'none';
+    </script>
+</body>
+</html>
